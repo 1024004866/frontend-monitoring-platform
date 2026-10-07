@@ -10,7 +10,7 @@
 | React 管理后台 | `npm run build` | Webpack 生产构建成功 |
 | React 页面 | Playwright 逐页检查 | 注册、登录、应用列表、流量、性能、接口、异常、Top 和地域页面正常渲染 |
 | Egg.js 服务端 | `npm run tsc` | TypeScript 编译通过 |
-| 本地演示 API | PowerShell HTTP 请求与 Playwright | 注册、登录态、应用列表和监控样例数据接口通过 |
+| 本地轻量 API | PowerShell HTTP 请求与 Playwright | 注册、登录态、JSONL 事件落盘和真实监控聚合接口通过 |
 
 浏览器检查期间修复了以下问题：
 
@@ -19,8 +19,8 @@
 - 未登录或服务端不可用时自动跳转登录页
 - 将页面标题由脚手架默认值改为 `Frontend Monitoring Platform`
 - 增加无需 Docker 的本地演示模式和 `demo2026 / Demo2026` 演示账号
-- 将“小慕问卷”作为被监控业务，统一页面、接口和异常样例数据
-- 修复接口表格缺失字段时崩溃、性能样例数据结构不匹配及 SDK 错误处理二次异常
+- 将“小慕问卷”接入浏览器采集端，真实上报页面、性能、请求和异常数据
+- 修复接口表格缺失字段时崩溃、早期演示数据结构不匹配及 SDK 错误处理二次异常
 
 ## 已知警告
 
@@ -34,7 +34,7 @@
 
 ## 完整链路环境
 
-当前验证机器没有安装 Docker，因此未验证 MySQL、Redis、Kafka、Elasticsearch 和 Kibana 组成的真实数据链路。本地演示模式已经绕过这些外部依赖，可用于功能展示和面试演示。
+当前验证机器没有安装 Docker，因此未验证 MySQL、Redis、Kafka、Elasticsearch 和 Kibana 组成的分布式数据链路。本地轻量模式使用同一批真实浏览器事件并写入 JSONL，可用于功能展示和面试演示，但不代表已经验证生产级消息队列和检索集群。
 
 完整联调需要先执行：
 
@@ -45,7 +45,7 @@ docker compose up -d
 npm run dev
 ```
 
-启动真实链路前还需设置 `MONITOR_USE_EXTERNAL_SERVICES=true`；未设置时默认使用本地演示数据。
+启动分布式链路前还需设置 `MONITOR_USE_EXTERNAL_SERVICES=true`；未设置时默认使用本地 JSONL 持久化与实时聚合。
 
 Docker Compose 中的 Redis 已配置为使用 `auth` 密码，与 `config.local.ts` 保持一致。
 

@@ -3,8 +3,31 @@ import React, { Suspense, lazy, ComponentType } from 'react';
 import { RouteObject } from 'react-router-dom';
 import { AppstoreOutlined, BarChartOutlined, OrderedListOutlined, FileSearchOutlined, RadarChartOutlined, MedicineBoxOutlined, ThunderboltOutlined, NodeIndexOutlined } from '@ant-design/icons';
 import { Loading } from '@/src/components/loading';
+
+const chunkReloadKey = 'frontend-monitoring-chunk-reload';
+
+const lazyWithRetry = (dynamicImport: () => Promise<{ default: ComponentType<any> }>) => lazy(async() => {
+  try {
+    const module = await dynamicImport();
+    sessionStorage.removeItem(chunkReloadKey);
+    return module;
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    const isChunkError = /ChunkLoadError|Loading (CSS )?chunk .* failed/i.test(message);
+
+    if(isChunkError && !sessionStorage.getItem(chunkReloadKey)){
+      sessionStorage.setItem(chunkReloadKey, '1');
+      window.location.reload();
+      return new Promise(() => undefined);
+    }
+
+    sessionStorage.removeItem(chunkReloadKey);
+    throw error;
+  }
+});
+
 const lazyLoad = (dynamicImport: () => Promise<{ default: ComponentType<any> }>) => {
-  const Component = lazy(dynamicImport);
+  const Component = lazyWithRetry(dynamicImport);
   return (
     <Suspense fallback={<Loading />}>
       <Component />

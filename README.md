@@ -94,7 +94,7 @@ cd ../service && npm install --workspaces=false
 
 ### 2. 启动本地演示
 
-本地开发默认启用演示模式，内置完整看板样例数据，不依赖 MySQL、Redis、Kafka 和 Elasticsearch：
+本地开发默认启用轻量模式，不依赖 MySQL、Redis、Kafka 和 Elasticsearch：
 
 ```bash
 npm run dev:service
@@ -103,7 +103,9 @@ npm run dev:desktop
 
 演示账号：`demo2026`，密码：`Demo2026`。也可以直接在登录页注册新账号。
 
-演示数据以“小慕问卷”为被监控业务，覆盖问卷列表、编辑、统计和发布接口，便于把两个面试项目串成一条完整业务链路。
+轻量模式不生成样例监控数据。它接收 SDK 上报并持久化到 `service/run/telemetry.jsonl`，看板中的流量、性能、请求和异常指标均由真实浏览器事件聚合得到；没有上报时显示 0 或空列表。
+
+联调“小慕问卷”时，同时启动问卷项目并访问 `http://localhost:3000`。问卷开发环境默认上报到 `http://localhost:7001/report`，也可以通过 `REACT_APP_MONITOR_API_URL` 修改地址。
 
 ### 3. 启动完整数据链路
 
