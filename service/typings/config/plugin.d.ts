@@ -1,4 +1,4 @@
-// This file is created by egg-ts-helper@2.1.0
+// This file is created by egg-ts-helper@2.1.1
 // Do not modify this file!!!!!!!!!
 /* eslint-disable */
 
@@ -23,9 +23,7 @@ import '@eggjs/tegg-eventbus-plugin';
 import '@eggjs/tegg-aop-plugin';
 import 'egg-tracer';
 import 'egg-cors';
-import 'egg-sequelize';
 import 'egg-validate';
-import 'egg-redis';
 import { EggPluginItem } from 'egg';
 declare module 'egg' {
   interface EggPlugin {

@@ -1,4 +1,8 @@
 import { EggPlugin } from 'egg';
+
+const useExternalServices = process.env.MONITOR_USE_EXTERNAL_SERVICES === 'true'
+  || process.env.NODE_ENV === 'production';
+
 const plugin: EggPlugin = {
   tegg: {
     enable: true,
@@ -33,7 +37,7 @@ const plugin: EggPlugin = {
     package: 'egg-cors',
   },
   sequelize: {
-    enable: true,
+    enable: useExternalServices,
     package: 'egg-sequelize',
   },
   validate: {
@@ -41,7 +45,7 @@ const plugin: EggPlugin = {
     package: 'egg-validate',
   },
   redis: {
-    enable: true,
+    enable: useExternalServices,
     package: 'egg-redis',
   },
 };

@@ -75,7 +75,8 @@ SDK 会自动初始化性能采集、异常监听、请求拦截、路由监听�
 
 - Node.js 18+（已使用 Node.js 24 验证构建）
 - pnpm 7.33.7
-- Docker 与 Docker Compose
+- 本地演示模式不需要 Docker
+- 完整数据链路需要 Docker 与 Docker Compose
 
 ### 1. 安装依赖
 
@@ -91,7 +92,18 @@ cd ../../desktop && npm ci
 cd ../service && npm install --workspaces=false
 ```
 
-### 2. 启动基础服务
+### 2. 启动本地演示
+
+本地开发默认启用演示模式，内置完整看板样例数据，不依赖 MySQL、Redis、Kafka 和 Elasticsearch：
+
+```bash
+npm run dev:service
+npm run dev:desktop
+```
+
+演示账号：`demo2026`，密码：`Demo2026`。也可以直接在登录页注册新账号。
+
+### 3. 启动完整数据链路
 
 Docker Compose 会启动 MySQL、Redis、Kafka、Elasticsearch 和 Kibana。启动前需要为 Kafka 提供宿主机地址：
 
@@ -109,14 +121,17 @@ $env:hostIP = "你的本机IP"
 docker compose up -d
 ```
 
-### 3. 启动服务端
+启动真实基础设施后，为服务端设置 `MONITOR_USE_EXTERNAL_SERVICES=true`。
+
+### 4. 启动服务端
 
 ```bash
 cd service
+export MONITOR_USE_EXTERNAL_SERVICES=true
 pnpm dev
 ```
 
-### 4. 启动管理后台
+### 5. 启动管理后台
 
 ```bash
 cd desktop

@@ -1,5 +1,5 @@
 import React, { useState }from 'react';
-import { Input, message as Message, Modal } from 'antd';
+import { Button, Input, message as Message, Modal } from 'antd';
 import { useNavigate } from 'react-router';
 import { useDispatch } from 'react-redux';
 import css from './index.module.less';
@@ -12,6 +12,7 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const [type, setType] = useState(ActionType.Login);
   const [show, setShow] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({
     user: '',
     pwd: '',
@@ -35,13 +36,16 @@ const LoginPage = () => {
 
   const toLogin = async() => {
     try {
+      setSubmitting(true);
       await login({
         account: form.user,
         password: form.pwd,
       });
       navigate('/');
     } catch (error) {
-      console.log(error);
+      Message.error('登录失败，请确认账号密码或后端服务状态');
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -57,6 +61,7 @@ const LoginPage = () => {
       if(type === ActionType.Login){
         toLogin();
       }else{
+        setSubmitting(true);
         await register({
           account: form.user,
           password: form.pwd,
@@ -69,7 +74,11 @@ const LoginPage = () => {
         });
       }
     } catch (error) {
-      console.log(error);
+      Message.error('注册失败，请稍后重试');
+    } finally {
+      if(type === ActionType.Regist){
+        setSubmitting(false);
+      }
     }
   };
   return (
@@ -120,12 +129,15 @@ const LoginPage = () => {
                 }}
                 prefix={<span className={css['site-form-item-icon']}>密码：</span>}
               />
-              <div
+              <Button
+                block
+                type="primary"
+                loading={submitting}
                 className={css['action']}
                 onClick={() => {
                   toSubmit(type);
                 }}>{type === ActionType.Login ? '登录' : '注册'}
-              </div>
+              </Button>
             </div>
           </div>
         )

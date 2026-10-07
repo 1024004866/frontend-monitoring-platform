@@ -219,6 +219,7 @@ const GeographicalDistribution = () => {
             className={styles.body}>
             <Table
               sticky
+              rowKey="label"
               dataSource={topData}
               pagination={false}
               columns={columns} />

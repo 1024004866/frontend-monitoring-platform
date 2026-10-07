@@ -18,7 +18,7 @@
     "cov": "egg-bin cov -p",
     "ci": "npm run lint && npm run cov && npm run tsc && npm run clean",
     "lint": "eslint . --ext .ts --cache",
-    "tsc": "tsc",
+    "tsc": "tsc --noEmit",
     "clean": "tsc -b --clean",
     "sequelize": "sequelize init:config && sequelize init:migrations"
   },

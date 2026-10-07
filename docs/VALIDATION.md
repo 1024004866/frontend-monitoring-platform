@@ -8,8 +8,9 @@
 | --- | --- | --- |
 | 监控 SDK | `npm run build` | UMD、ESM 与类型声明构建成功 |
 | React 管理后台 | `npm run build` | Webpack 生产构建成功 |
-| React 页面 | Playwright 从 `/` 启动 | 未登录时自动跳转 `/login`，登录/注册首屏正常渲染 |
+| React 页面 | Playwright 逐页检查 | 注册、登录、应用列表、流量、性能、接口、异常、Top 和地域页面正常渲染 |
 | Egg.js 服务端 | `npm run tsc` | TypeScript 编译通过 |
+| 本地演示 API | PowerShell HTTP 请求与 Playwright | 注册、登录态、应用列表和监控样例数据接口通过 |
 
 浏览器检查期间修复了以下问题：
 
@@ -17,6 +18,8 @@
 - 修复用户信息接口失败后加载状态无法结束、页面停留在空白状态的问题
 - 未登录或服务端不可用时自动跳转登录页
 - 将页面标题由脚手架默认值改为 `Frontend Monitoring Platform`
+- 增加无需 Docker 的本地演示模式和 `demo2026 / Demo2026` 演示账号
+- 修复接口表格缺失字段时崩溃、性能样例数据结构不匹配及 SDK 错误处理二次异常
 
 ## 已知警告
 
@@ -28,9 +31,9 @@
 
 后续可通过路由拆包、依赖分组、图片压缩和 WebP/AVIF 转换优化。
 
-## 环境阻塞
+## 完整链路环境
 
-当前验证机器没有安装 Docker，因此没有启动项目要求的 MySQL、Redis、Kafka、Elasticsearch 和 Kibana 容器。Egg.js 可以进入启动流程，但连接本机已有 MySQL 时因 root 密码不匹配退出。
+当前验证机器没有安装 Docker，因此未验证 MySQL、Redis、Kafka、Elasticsearch 和 Kibana 组成的真实数据链路。本地演示模式已经绕过这些外部依赖，可用于功能展示和面试演示。
 
 完整联调需要先执行：
 
@@ -40,6 +43,8 @@ export hostIP=你的本机IP
 docker compose up -d
 npm run dev
 ```
+
+启动真实链路前还需设置 `MONITOR_USE_EXTERNAL_SERVICES=true`；未设置时默认使用本地演示数据。
 
 Docker Compose 中的 Redis 已配置为使用 `auth` 密码，与 `config.local.ts` 保持一致。
 

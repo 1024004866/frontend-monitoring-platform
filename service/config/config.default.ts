@@ -12,7 +12,9 @@ export default (appInfo: EggAppInfo) => {
   config.keys = `${appInfo.name }_1702282822597_3491`;
 
   // add your egg config in here
-  config.middleware = [];
+  const useExternalServices = process.env.MONITOR_USE_EXTERNAL_SERVICES === 'true'
+    || process.env.NODE_ENV === 'production';
+  config.middleware = useExternalServices ? [] : [ 'demoApi' ];
 
   // add your special config in here
   const bizConfig = {
@@ -28,7 +30,7 @@ export default (appInfo: EggAppInfo) => {
   };
 
   config.cors = {
-    origin: '*',
+    origin: 'http://localhost:8080',
     credentials: true,
     allowMethods: 'GET,HEAD,PUT,POST,DELETE,PATCH',
   };

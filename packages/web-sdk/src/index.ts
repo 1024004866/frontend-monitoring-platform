@@ -213,7 +213,7 @@ export class Monitor {
             ...monitor.getPageMsg(),
             type: 'jsError',
             message: error.message,
-            stack: error.error.stack,
+            stack: error.error?.stack || error.message,
             colno: error.colno,
             lineno: error.lineno,
             filename: error.filename,

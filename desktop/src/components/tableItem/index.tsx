@@ -40,7 +40,7 @@ const renderUrl = (url: string, maxLen: number, copy: boolean) => {
 };
 
 const renderText = (url: string, maxLen: number, copy: boolean) => {
-  if(url === '') return '-';
+  if(!url) return '-';
   let str = url;
   if(url.length > maxLen){
     str = `${str.substring(0, maxLen + 2)}...`;

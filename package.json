@@ -4,6 +4,8 @@
   "version": "1.0.0",
   "packageManager": "pnpm@7.33.7",
   "scripts": {
+    "dev:desktop": "npm --prefix desktop run dev",
+    "dev:service": "npm --prefix service run dev",
     "install:all": "bash ./script/install.sh",
     "version": "lerna version --exact --no-commit-hooks --no-push --conventional-commits  --force-git-tag",
     "start": "dumi dev",
