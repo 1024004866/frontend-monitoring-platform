@@ -73,16 +73,22 @@ SDK 会自动初始化性能采集、异常监听、请求拦截、路由监听�
 
 ### 环境要求
 
-- Node.js 18+
-- pnpm
+- Node.js 18+（已使用 Node.js 24 验证构建）
+- pnpm 7.33.7
 - Docker 与 Docker Compose
 
 ### 1. 安装依赖
 
 ```bash
-pnpm install
-pnpm --dir desktop install
-pnpm --dir service install
+npx pnpm@7.33.7 install --frozen-lockfile
+```
+
+如果 Windows 环境安装 workspace 依赖时遇到符号链接占用，也可以分别执行：
+
+```bash
+cd packages/web-sdk && npm install --workspaces=false
+cd ../../desktop && npm ci
+cd ../service && npm install --workspaces=false
 ```
 
 ### 2. 启动基础服务
@@ -137,6 +143,8 @@ pnpm dev
 ## 面试资料
 
 项目的数据链路、个人职责表达和常见追问整理在 [docs/INTERVIEW_GUIDE.md](docs/INTERVIEW_GUIDE.md)。
+
+实际构建和运行检查记录见 [docs/VALIDATION.md](docs/VALIDATION.md)。
 
 ## License
 
