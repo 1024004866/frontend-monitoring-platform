@@ -27,6 +27,29 @@ const requestEvents = (items: TelemetryEvent[]) => items.filter(item => item.typ
 const performanceEvents = (items: TelemetryEvent[]) => items.filter(item => item.type === 'performance');
 const errorEvents = (items: TelemetryEvent[]) => items.filter(item => [ 'jsError', 'rejectError', 'loadResourceError' ].includes(item.type));
 
+const redactSensitive = (input: unknown): unknown => {
+  if (Array.isArray(input)) return input.map(redactSensitive);
+  if (input && typeof input === 'object') {
+    return Object.fromEntries(Object.entries(input as Record<string, unknown>).map(([ key, value ]) => [
+      key,
+      /password|token|authorization|secret/i.test(key) ? '[REDACTED]' : redactSensitive(value),
+    ]));
+  }
+  return input;
+};
+
+const sanitizeText = (input: unknown) => {
+  if (typeof input !== 'string' || !input) return input;
+  try { return JSON.stringify(redactSensitive(JSON.parse(input))); }
+  catch { return input.replace(/((?:password|token|authorization|secret)=)[^&]*/gi, '$1[REDACTED]'); }
+};
+
+const sanitizeEvent = (event: TelemetryEvent): TelemetryEvent => ({
+  ...event,
+  reqBody: sanitizeText(event.reqBody),
+  reqHeaders: sanitizeText(event.reqHeaders),
+});
+
 const labels = (beginTime?: string, endTime?: string) => {
   let cursor = dayjs(beginTime || dayjs().subtract(6, 'day')).startOf('day');
   const end = dayjs(endTime || dayjs()).endOf('day');
@@ -70,8 +93,9 @@ export default (_options: unknown, app: Application) => {
     await fs.mkdir(join(app.baseDir, 'run'), { recursive: true });
     try {
       const content = await fs.readFile(telemetryFile, 'utf8');
-      content.split('\n').filter(Boolean).forEach(line => { try { telemetry.push(JSON.parse(line)); } catch { /* ignore partial line */ } });
+      content.split('\n').filter(Boolean).forEach(line => { try { telemetry.push(sanitizeEvent(JSON.parse(line))); } catch { /* ignore partial line */ } });
       if (telemetry.length > 20000) telemetry.splice(0, telemetry.length - 20000);
+      await fs.writeFile(telemetryFile, telemetry.length ? `${telemetry.map(item => JSON.stringify(item)).join('\n')}\n` : '', 'utf8');
     } catch (error: any) {
       if (error.code !== 'ENOENT') app.logger.warn('Unable to load local telemetry: %s', error.message);
     }
@@ -94,7 +118,7 @@ export default (_options: unknown, app: Application) => {
       const device = parser.getDevice();
       const incoming = (Array.isArray(payload) ? payload : [ payload ]).filter(item => item && typeof item === 'object') as Record<string, any>[];
       const now = Date.now();
-      const accepted = incoming.slice(0, 100).map(item => ({
+      const accepted = incoming.slice(0, 100).map(item => sanitizeEvent({
         ...item,
         appId: String(item.appId || ctx.query.appId || ''),
         type: String(item.type || 'unknown'),
@@ -213,7 +237,7 @@ export default (_options: unknown, app: Application) => {
       ok(ctx, { total: rows.length, data: rows.slice((page - 1) * size, page * size).map((item, index) => ({ _id: `performance-${item.userTimeStamp}-${index}`, _source: item })) });
     } else if (path.endsWith('/httpError/getHttpErrorRank') || path.endsWith('/httpError/getHttpDoneRank')) {
       const requestType = path.includes('ErrorRank') ? 'error' : 'done'; const rows = requestEvents(events).filter(item => item.requestType === requestType); const groups = new Map<string, TelemetryEvent[]>();
-      rows.forEach(item => { const key = `${item.method}|${item.transport}|${item.url}`; groups.set(key, [ ...(groups.get(key) || []), item ]); });
+      rows.forEach(item => { const key = `${item.method}|${item.transport || 'xhr'}|${item.url}`; groups.set(key, [ ...(groups.get(key) || []), item ]); });
       ok(ctx, [ ...groups.values() ].sort((a, b) => b.length - a.length).slice(0, 10).map(items => ({ doc_count: items.length, key: { method: items[0].method, requestType, type: items[0].transport || 'xhr', url: items[0].url }, avg_cost: value(items.reduce((sum, item) => sum + numberOf(item.cost), 0) / items.length) })));
     } else if (path.endsWith('/httpError/getHttpErrorRang')) {
       const rows = requestEvents(events).filter(item => item.requestType === 'error'); ok(ctx, labels(ctx.query.beginTime as string, ctx.query.endTime as string).map(date => ({ label: dayjs(date).format('MM-DD'), value: rows.filter(item => dateOf(item).format('YYYY-MM-DD') === date).length })));

@@ -31,6 +31,7 @@ const eventBus = new EventBus();
 
 
 interface ShowHttpDetailQuery{
+  url?: string;
   link?: string;
   requestType?: 'done' | 'error' | string;
   beginTime?: string;

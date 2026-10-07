@@ -10,7 +10,7 @@ const initQuery = {
   size: 10,
   sorterName: '',
   sorterKey: null,
-  link: '',
+  url: '',
   beginTime: '',
   endTime: '',
   requestType: '',

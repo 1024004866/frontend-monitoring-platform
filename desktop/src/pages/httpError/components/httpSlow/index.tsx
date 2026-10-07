@@ -59,9 +59,9 @@ export const HttpSlow = () => {
       width: 120,
       render: (_, record) => <a onClick={() => {
         showHttpDetail.publish({
-          link: record.url,
+          url: record.url,
           requestType: 'done',
-          beginTime: dayjs().add(-(day - 1), 'day').format('YYYY-MM-DD:00:00:00'),
+          beginTime: dayjs().add(-(day - 1), 'day').format('YYYY-MM-DD 00:00:00'),
           endTime: dayjs().format('YYYY-MM-DD 23:59:59'),
         });
       }}>查看详情</a>,
@@ -72,7 +72,7 @@ export const HttpSlow = () => {
     setLoading(true);
     const { data } = await getHttpDoneRank({
       appId: active,
-      beginTime: dayjs().add(-(day - 1), 'day').format('YYYY-MM-DD:00:00:00'),
+      beginTime: dayjs().add(-(day - 1), 'day').format('YYYY-MM-DD 00:00:00'),
       endTime: dayjs().format('YYYY-MM-DD 23:59:59'),
     });
     const result = data.map((item) => ({
