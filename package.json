@@ -1,5 +1,5 @@
 {
-  "name": "frontend-watch-dog",
+  "name": "frontend-monitoring-platform",
   "private": true,
   "version": "1.0.0",
   "scripts": {
@@ -31,14 +31,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/luoguoxiong/frontend-watch-dog.git"
+    "url": "git+https://github.com/1024004866/frontend-monitoring-platform.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/luoguoxiong/frontend-watch-dog/issues"
+    "url": "https://github.com/1024004866/frontend-monitoring-platform/issues"
   },
-  "homepage": "https://github.com/luoguoxiong/frontend-watch-dog#readme",
+  "homepage": "https://github.com/1024004866/frontend-monitoring-platform#readme",
   "workspaces": [
     "packages/*"
   ]
