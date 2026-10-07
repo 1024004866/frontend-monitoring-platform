@@ -103,6 +103,8 @@ npm run dev:desktop
 
 演示账号：`demo2026`，密码：`Demo2026`。也可以直接在登录页注册新账号。
 
+演示数据以“小慕问卷”为被监控业务，覆盖问卷列表、编辑、统计和发布接口，便于把两个面试项目串成一条完整业务链路。
+
 ### 3. 启动完整数据链路
 
 Docker Compose 会启动 MySQL、Redis、Kafka、Elasticsearch 和 Kibana。启动前需要为 Kafka 提供宿主机地址：

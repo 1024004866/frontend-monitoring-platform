@@ -22,8 +22,8 @@ const users = new Map<string, DemoUser>();
 const apps: DemoApp[] = [
   {
     id: 1,
-    appId: 'demo-react-app',
-    appName: 'React 电商管理后台',
+    appId: 'xiaomu-survey',
+    appName: '小慕问卷',
     createId: 1,
     appType: 1,
     status: 1,
@@ -81,19 +81,19 @@ const traffic = (keys: string[]) => {
 };
 
 const performanceRows = [
-  { pageUrl: '/dashboard', whiteTime: 428, fcp: 612, lcp: 1028, fid: 18, ttfb: 96, dnsTime: 12, tcpTime: 28 },
-  { pageUrl: '/products', whiteTime: 536, fcp: 745, lcp: 1286, fid: 24, ttfb: 118, dnsTime: 18, tcpTime: 35 },
-  { pageUrl: '/orders', whiteTime: 683, fcp: 892, lcp: 1460, fid: 31, ttfb: 132, dnsTime: 16, tcpTime: 41 },
+  { pageUrl: '/manage/list', whiteTime: 428, fcp: 612, lcp: 1028, fid: 18, ttfb: 96, dnsTime: 12, tcpTime: 28 },
+  { pageUrl: '/question/edit', whiteTime: 536, fcp: 745, lcp: 1286, fid: 24, ttfb: 118, dnsTime: 18, tcpTime: 35 },
+  { pageUrl: '/question/stat', whiteTime: 683, fcp: 892, lcp: 1460, fid: 31, ttfb: 132, dnsTime: 16, tcpTime: 41 },
 ];
 
 const httpRows = [
-  { url: '/api/orders', link: '/dashboard', method: 'GET', requestType: 'done', type: 'xhr', status: 200, cost: 186, reqHeaders: '{"Accept":"application/json"}', reqBody: '-', '@timestamp': new Date().toISOString(), userTimeStamp: Date.now(), pageUrl: '/dashboard' },
-  { url: '/api/products', link: '/products', method: 'GET', requestType: 'done', type: 'fetch', status: 200, cost: 268, reqHeaders: '{"Accept":"application/json"}', reqBody: '-', '@timestamp': new Date(Date.now() - 20000).toISOString(), userTimeStamp: Date.now() - 20000, pageUrl: '/products' },
-  { url: '/api/coupons', link: '/checkout', method: 'POST', requestType: 'error', type: 'xhr', status: 500, cost: 1236, reqHeaders: '{"Content-Type":"application/json"}', reqBody: '{"coupon":"DEMO20"}', '@timestamp': new Date(Date.now() - 40000).toISOString(), userTimeStamp: Date.now() - 40000, pageUrl: '/checkout' },
+  { url: '/api/question', link: '/manage/list', method: 'GET', requestType: 'done', type: 'xhr', status: 200, cost: 186, reqHeaders: '{"Accept":"application/json"}', reqBody: '-', '@timestamp': new Date().toISOString(), userTimeStamp: Date.now(), pageUrl: '/manage/list' },
+  { url: '/api/question/answer', link: '/question/stat', method: 'GET', requestType: 'done', type: 'fetch', status: 200, cost: 268, reqHeaders: '{"Accept":"application/json"}', reqBody: '-', '@timestamp': new Date(Date.now() - 20000).toISOString(), userTimeStamp: Date.now() - 20000, pageUrl: '/question/stat' },
+  { url: '/api/question/publish', link: '/question/edit', method: 'POST', requestType: 'error', type: 'xhr', status: 500, cost: 1236, reqHeaders: '{"Content-Type":"application/json"}', reqBody: '{"id":"q-demo-01"}', '@timestamp': new Date(Date.now() - 40000).toISOString(), userTimeStamp: Date.now() - 40000, pageUrl: '/question/edit' },
 ];
 
 const tops: Record<string, Array<{ label: string; value: number }>> = {
-  webVisit: [ { label: '/dashboard', value: 3258 }, { label: '/products', value: 2486 }, { label: '/orders', value: 1764 } ],
+  webVisit: [ { label: '/manage/list', value: 3258 }, { label: '/question/edit', value: 2486 }, { label: '/question/stat', value: 1764 } ],
   browser: [ { label: 'Chrome', value: 4580 }, { label: 'Edge', value: 1260 }, { label: 'Safari', value: 920 } ],
   deviceVendor: [ { label: 'Desktop', value: 3810 }, { label: 'Apple', value: 1720 }, { label: 'Android', value: 1230 } ],
   city: [ { label: '广东', value: 1680 }, { label: '北京', value: 1320 }, { label: '上海', value: 1160 }, { label: '浙江', value: 860 } ],
@@ -208,9 +208,9 @@ export default (_options: unknown, app: Application) => {
     } else if (path.endsWith('/performance/getPerformance')) {
       ok(ctx, { total: performanceRows.length, data: performanceRows.map((item, index) => ({ _id: `performance-${index + 1}`, _source: { ...item, userTimeStamp: Date.now() - index * 120000, domain: 'demo.example.com', browserName: 'Chrome', osName: 'Windows' } })) });
     } else if (path.endsWith('/httpError/getHttpErrorRank')) {
-      ok(ctx, [ { doc_count: 18, key: { method: 'POST', requestType: 'error', type: 'xhr', url: '/api/coupons' }, avg_cost: { value: 1236 } }, { doc_count: 9, key: { method: 'GET', requestType: 'error', type: 'fetch', url: '/api/inventory' }, avg_cost: { value: 864 } } ]);
+      ok(ctx, [ { doc_count: 18, key: { method: 'POST', requestType: 'error', type: 'xhr', url: '/api/question/publish' }, avg_cost: { value: 1236 } }, { doc_count: 9, key: { method: 'GET', requestType: 'error', type: 'fetch', url: '/api/question/answer' }, avg_cost: { value: 864 } } ]);
     } else if (path.endsWith('/httpError/getHttpDoneRank')) {
-      ok(ctx, [ { doc_count: 126, key: { method: 'GET', requestType: 'done', type: 'fetch', url: '/api/products' }, avg_cost: { value: 268 } }, { doc_count: 98, key: { method: 'POST', requestType: 'done', type: 'xhr', url: '/api/orders' }, avg_cost: { value: 486 } } ]);
+      ok(ctx, [ { doc_count: 126, key: { method: 'GET', requestType: 'done', type: 'fetch', url: '/api/question' }, avg_cost: { value: 268 } }, { doc_count: 98, key: { method: 'POST', requestType: 'done', type: 'xhr', url: '/api/question' }, avg_cost: { value: 486 } } ]);
     } else if (path.endsWith('/httpError/getHttpErrorRang')) {
       ok(ctx, trend(ctx.query.beginTime as string, ctx.query.endTime as string, 8));
     } else if (path.endsWith('/httpError/getHttpList')) {
@@ -218,7 +218,7 @@ export default (_options: unknown, app: Application) => {
     } else if (path.endsWith('/jsError/getJsErrorRang')) {
       ok(ctx, trend(ctx.query.beginTime as string, ctx.query.endTime as string, 4));
     } else if (path.endsWith('/jsError/getJsErrorList')) {
-      ok(ctx, [ { message: 'Cannot read properties of undefined', filename: 'https://demo.example.com/static/app.js', lineno: 128, colno: 24, errorCount: 12, userIds: [ 'u1024', 'u2048', 'u4096' ], stack: 'TypeError: Cannot read properties of undefined\n    at renderOrder (app.js:128:24)', pageUrl: '/orders' } ]);
+      ok(ctx, [ { message: 'Cannot read properties of undefined', filename: 'https://wenjuan.demo/static/app.js', lineno: 128, colno: 24, errorCount: 12, userIds: [ 'u1024', 'u2048', 'u4096' ], stack: 'TypeError: Cannot read properties of undefined\n    at renderQuestion (app.js:128:24)', pageUrl: '/question/edit' } ]);
     } else if (path.endsWith('/jsError/getNearbyCode')) {
       ok(ctx, { code: [], originalPosition: { source: '', line: 0, column: 0, name: '' }, source: '', start: 0 });
     } else {
