@@ -6,7 +6,7 @@ import { getUserInfo } from '@/src/api';
 const userModel = createModel<RootModel>()({
   state: {
     userInfo: {} as UserInfo,
-    isLoading: false,
+    isLoading: true,
   },
   reducers: {
     resetUserInfo(){
@@ -35,11 +35,14 @@ const userModel = createModel<RootModel>()({
   effects: (dispatch) => ({
     async getUserInfo() {
       dispatch.user.setLoading(true);
-      const { code, data } = await getUserInfo();
-      if(code === 1000){
-        dispatch.user.setUserInfo(data);
+      try {
+        const { code, data } = await getUserInfo();
+        if(code === 1000){
+          dispatch.user.setUserInfo(data);
+        }
+      } finally {
+        dispatch.user.setLoading(false);
       }
-      dispatch.user.setLoading(false);
     },
   }),
 });

@@ -8,10 +8,15 @@
 | --- | --- | --- |
 | 监控 SDK | `npm run build` | UMD、ESM 与类型声明构建成功 |
 | React 管理后台 | `npm run build` | Webpack 生产构建成功 |
-| React 页面 | Playwright 访问 `/login` | 登录/注册首屏正常渲染 |
+| React 页面 | Playwright 从 `/` 启动 | 未登录时自动跳转 `/login`，登录/注册首屏正常渲染 |
 | Egg.js 服务端 | `npm run tsc` | TypeScript 编译通过 |
 
-浏览器检查期间发现并删除了管理后台入口中用于测试监控能力的主动 `throw Error(1)`，避免生产页面每次启动都制造 JavaScript 异常。
+浏览器检查期间修复了以下问题：
+
+- 删除管理后台入口中用于测试监控能力的主动 `throw Error(1)`
+- 修复用户信息接口失败后加载状态无法结束、页面停留在空白状态的问题
+- 未登录或服务端不可用时自动跳转登录页
+- 将页面标题由脚手架默认值改为 `Frontend Monitoring Platform`
 
 ## 已知警告
 

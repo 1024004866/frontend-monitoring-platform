@@ -14,7 +14,7 @@ export const checkAppStatus = (Page: React.FunctionComponent) => () => {
 
   const { appDispatch, apps, isLoading } = useAppStore();
 
-  const { userInfo } = useSelector((state: RootState) => state.user);
+  const { userInfo, isLoading: isUserLoading } = useSelector((state: RootState) => state.user);
 
   React.useEffect(() => {
     dispatch.user.getUserInfo();
@@ -26,8 +26,12 @@ export const checkAppStatus = (Page: React.FunctionComponent) => () => {
     }
   }, [userInfo.id]);
 
-  if(!userInfo?.id){
+  if(isUserLoading){
     return <Loading />;
+  }
+
+  if(!userInfo?.id){
+    return <Navigate to="/login" replace />;
   }
 
   if(!isLoading && apps.length === 0 && location.pathname !== '/'){
